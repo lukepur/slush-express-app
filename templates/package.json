@@ -1,0 +1,24 @@
+{
+    "name": "<%= name %>",
+    "description": "<%= description %>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lukepur/<%= name %>.git"
+    },
+    "licenses": [{
+        "type": "<$= license %>"
+    }],
+    "main": "src/index.js",
+    "engines": {
+        "node": ">= 0.10.26",
+        "npm": ">=1.4.3"
+    },
+    "scripts": {
+        "start": "node app.js",
+        "test": "echo \"No tests\""
+    },
+    "dependencies": {
+        <% if (includeFrontend) { %>"hbs": "^3.0.1",<% } %>
+        "express": "~4.0.0"
+    }
+}
