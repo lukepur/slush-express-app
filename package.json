@@ -28,8 +28,8 @@
     "gulp-conflict": "^0.3.0",
     "gulp-ignore": "^1.2.1",
     "gulp-install": "^0.2.0",
+    "gulp-rename": "^1.2.2",
     "gulp-template": "^3.0.0",
-    "inquirer": "^0.8.2",
-    "jade": "^1.9.2"
+    "inquirer": "^0.8.2"
   }
 }

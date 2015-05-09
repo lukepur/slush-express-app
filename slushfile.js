@@ -4,28 +4,67 @@ var gulp = require('gulp'),
     template = require('gulp-template'),
     inquirer = require('inquirer'),
     ignore = require('gulp-ignore'),
+    rename = require('gulp-rename'),
     path = require('path');
 
 gulp.task('default', function (done) {
   var defaults = {
     name: path.basename(process.cwd()),
     description: '',
-    includeFrontend: 'yes',
+    includeFrontend: true,
+    includeMongo: false,
+    dbUrl: 'mongodb://127.0.0.1/test',
     license: "MIT"
   };
 
+  var TPL_BASE = 'templates',
+      STATIC_PATHS = ['*.*', ];
+
+  function constructPaths (answers) {
+    // paths to include (i.e. always required)
+    var paths = ['routes'];
+
+    // Add frontend capabilities
+    if (answers.includeFrontend) {
+      paths.push('views');
+      paths.push('src');
+    }
+
+    // Add mongo capabilities
+    if (answers.includeMongo) {
+      paths.push('models');
+    }
+
+    // Turn paths into globs
+    paths.forEach(function(_path, index){
+      paths[index] = path.join(__dirname, TPL_BASE, _path) + '/**/*.*';
+    });
+
+    // Conditional files at project root
+    if (answers.includeFrontend) {
+      paths.push(path.join(__dirname, TPL_BASE, 'root_conditional/gulpfile.js'));
+    }
+
+    // Add files at root of templates dir
+    paths.push(path.join(__dirname, TPL_BASE, '*.*'));
+    paths.push(path.join(__dirname, TPL_BASE, '.*'));
+    return paths;
+  }
+
   function run (answers) {
-    var viewsGlobs = [path.join(__dirname, 'templates/views'),
-      path.join(__dirname, 'templates/views/**/*')];
+    var includedPaths = constructPaths(answers),
+        templatesPath = path.join(__dirname, TPL_BASE);
 
-    gulp.src(path.join(__dirname, 'templates/**/*'))
-
-    // Remove view if no frontend
-    .pipe(ignore.exclude(!answers.includeFrontend ? viewsGlobs : ''))
+    gulp.src(includedPaths, {base: templatesPath})
 
     .pipe(template(answers))
 
-    .pipe(gulp.dest('./'))
+    // Move root_conditional files to root
+    .pipe(rename(function (path) {
+      path.dirname = path.dirname.replace('root_conditional', '');
+    }))
+
+    .pipe(gulp.dest(process.cwd()))
 
     .pipe(install())
 
@@ -52,9 +91,24 @@ gulp.task('default', function (done) {
       default: defaults.includeFrontend
     },
     {
+      type: 'confirm',
+      name: 'includeMongo',
+      message: "Do you want to include MongoDB integration?",
+      default: defaults.includeMongo
+    },
+    {
+      when: function (_answers) {
+        return _answers.includeMongo;
+      },
+      name: 'dbUrl',
+      message: 'What is the mongo DB url?',
+      default: defaults.dbUrl
+    },
+    {
       name: 'license',
       message: 'Licence',
       default: defaults.license
     }
   ], run);
+
 });
