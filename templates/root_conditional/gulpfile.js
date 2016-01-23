@@ -10,6 +10,7 @@ var buildDir = 'build',
     paths = {
       scss_main: ['src/scss/main.scss'],
       scss_all: ['src/scss/**/*.scss'],
+      images: ['src/images/**/*.*'],
       app_js: ['src/js/entry.js'],
       scripts: ['src/js/**/*.js'],
       build: [buildDir]
@@ -17,7 +18,8 @@ var buildDir = 'build',
 
 var dests = {
   css: path.join(buildDir, 'css'),
-  js: path.join(buildDir, 'js')
+  js: path.join(buildDir, 'js'),
+  images: path.join(buildDir, 'images')
 };
 
 gulp.task('clean', function(done) {
@@ -30,6 +32,11 @@ gulp.task('css', function() {
     .pipe(gulp.dest(dests.css));
 });
 
+gulp.task('images', function() {
+  gulp.src(paths.images)
+  .pipe(gulp.dest(dests.images));
+});
+
 gulp.task('js', function() {
   browserify(paths.app_js)
     .bundle()
@@ -40,6 +47,7 @@ gulp.task('js', function() {
 gulp.task('watch', function() {
   gulp.watch(paths.scss_all, ['css']);
   gulp.watch(paths.scripts, ['js']);
+  gulp.watch(paths.images, ['images']);
 
   browsersync({
     baseDir: buildDir,
@@ -47,4 +55,4 @@ gulp.task('watch', function() {
   });
 });
 
-gulp.task('default', ['css', 'js']);
+gulp.task('default', ['css', 'images', 'js']);
