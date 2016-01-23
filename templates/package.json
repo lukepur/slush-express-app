@@ -10,7 +10,7 @@
     }],
     "main": "src/index.js",
     "engines": {
-        "node": ">= 0.10.26",
+        "node": ">= 4.0.0",
         "npm": ">=1.4.3"
     },
     "scripts": {
@@ -18,17 +18,17 @@
         "test": "echo \"No tests\""
     },
     "dependencies": {
-        <% if (includeFrontend) { %>"hbs": "^3.0.1",<% } %>
-        <% if (includeMongo) { %>"mongoose": "^4.0.1",<% } %>
-        "express": "~4.0.0",
-        "dotenv": "~1.0.0"
+        <% if (includeFrontend) { %>"hbs": "*",<% } %>
+        <% if (includeMongo) { %>"mongoose": "*",<% } %>
+        "express": "*",
+        "dotenv": "*"
     },
     "devDependencies": {
-        <% if (includeFrontend) {%>"gulp": "^3.8.11",
-        "browserify": "^10.1.3",
-        "browser-sync": "^2.7.1",
-        "del": "^1.1.1",
-        "vinyl-source-stream": "^1.1.0",
-        "gulp-sass": "^2.0.0"<% } %>
+        <% if (includeFrontend) {%>"gulp": "*",
+        "browserify": "*",
+        "browser-sync": "*",
+        "del": "*",
+        "vinyl-source-stream": "*",
+        "gulp-sass": "*"<% } %>
     }
 }

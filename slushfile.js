@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-    install = require('gulp-install'),
+    exec = require('child_process').exec,
     conflict = require('gulp-conflict'),
     template = require('gulp-template'),
     inquirer = require('inquirer'),
@@ -7,7 +7,7 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     path = require('path');
 
-gulp.task('default', function (done) {
+gulp.task('run-scaffold', function (done) {
   var defaults = {
     name: path.basename(process.cwd()),
     description: '',
@@ -65,10 +65,8 @@ gulp.task('default', function (done) {
     }))
 
     .pipe(gulp.dest(process.cwd()))
-
-    .pipe(install())
-
     .on('end', function() {
+      console.log('App built. Installing dependencies...');
       done();
     });
   }
@@ -93,7 +91,7 @@ gulp.task('default', function (done) {
     {
       type: 'confirm',
       name: 'includeMongo',
-      message: "Do you want to include MongoDB integration?",
+      message: 'Do you want to include MongoDB integration?',
       default: defaults.includeMongo
     },
     {
@@ -110,5 +108,23 @@ gulp.task('default', function (done) {
       default: defaults.license
     }
   ], run);
-
 });
+
+gulp.task('install', ['run-scaffold'], function(cb) {
+  exec('npm update --save', function(err) {
+    cb(err);
+  });
+});
+
+gulp.task('install:dev', ['run-scaffold'], function(cb) {
+  exec('npm update --save-dev', function(err) {
+    cb(err);
+  });
+});
+
+gulp.task('build-and-install', ['run-scaffold', 'install', 'install:dev'], function (done) {
+  console.log('Dependencies installed. Now run:\ngulp && npm start');
+  done();
+});
+
+gulp.task('default', ['build-and-install']);
